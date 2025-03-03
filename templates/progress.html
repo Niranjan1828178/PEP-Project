@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Progress</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="static/progress.css">
+  
+</head>
+<body>
+    <div class="title_container">
+        <div class="wtitle">LearnSphere</div>
+        <a class="logout move" href="{{ url_for('logout') }}"><img class="leaderpic" src="static/logout.jpg"></a>
+    </div>
+
+    <div class="container">
+        <h2>Quiz Progress</h2>
+        <p id="resultMessage" class="result">You Scored: {{result.score}} / 10.</p>
+        {% if result.score > 7%}
+
+        <img id="scoreBadge" class="badge-img" src="static\quality.png" alt="Badge">{% endif %}
+     
+        <div id="courseSuggestions" class="courses">
+            <div class="coursetitle"> Recommended Topics:</div>
+            {% for i in result.improvement %}
+            <div class="course-item">
+                <a class="links" href="{{i.1}}">{{i.0}}</a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="col-12 col-md-3">
+            <a href="{{ url_for('quiz') }}" class="btn btn-primary btn-block">Quiz</a>
+        </div>
+        <div class="col-12 col-md-3">
+            <a href="{{ url_for('index') }}" class="btn btn-primary btn-block">Back</a>
+        </div>
+    </div>
+    
+
+
+</body>
+</html>

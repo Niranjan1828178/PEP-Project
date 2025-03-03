@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/leaderboard.css">
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="title_container">
+        <div class="wtitle">LearnSphere</div>
+        <a class="logout move" href="{{ url_for('logout') }}"><img class="leaderpic" src="static/logout.jpg"></a>
+    </div>
+
+    <div class="container">
+        <div class="fixed_div">
+        <h2>Leaderboard</h2>
+    </div>
+        
+        <table class="table table-striped">
+            <div class="fixed_div1">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th scope="col">Username</th>
+                    <th>Badge</th>
+                    <th scope="col">Total Score</th>
+                </tr>
+            </thead>
+        </div>
+            <tbody>
+                {% for user in leaderboard_data %}
+                {% if user.rank==1%}
+                    <tr class="first">
+                        {% else%}
+                        <tr>
+                            {%endif%}
+                        <td>{{user.rank}}</td>
+                        <td>
+                            {{ user.username }} 
+                        </td>
+                            <td>
+                            {% if loop.index == 1 %}
+                                <span class="badge badge-gold">Gold</span>
+                            {% elif loop.index == 2 %}
+                                <span class="badge badge-silver">Silver</span>
+                            {% elif loop.index == 3 %}
+                                <span class="badge badge-bronze">Bronze</span>
+                            {% else %}
+                                <span class="badge badge-secondary">Participant</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">{{ user.score }}</td>  <!-- Displaying the total score -->
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="col-12 col-md-3">
+            <a href="{{ url_for('index') }}" class="btn btn-primary btn-block">Back</a>
+        </div>
+    </div>
+</body>
+</html>

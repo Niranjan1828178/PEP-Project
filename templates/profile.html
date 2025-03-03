@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/profile.css">
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="title_container">
+        <div class="wtitle">LearnSphere</div>
+        <a class="logout move" href="{{ url_for('logout') }}"><img class="leaderpic" src="static/logout.jpg"></a>
+    </div>
+
+    <div class="container">
+        <h2>Update Your Profile</h2>
+        <div class="innercontainer">
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">Name:</label>
+                <input class="form-control" id="learning_goals" name="username" value="{{user.username}}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" class="form-control" id="learning_pace" name="email" value="{{user.email}}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone_number">Phone Number:</label>
+                <input type="text" class="form-control" id="learning_style" name="phone_number" value="{{user.phone_number}}" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Update Profile</button>
+            <div class="col-12">
+                <a href="{{ url_for('index') }}" class="btn btn-primary btn-block a">Back</a>
+            </div>
+
+        </form>
+    </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Page</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/quiz.css">
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div id="back">
+    <div class="title_container">
+        <div class="wtitle">LearnSphere</div>
+        <a class="logout move" href="{{ url_for('logout') }}"><img class="leaderpic" src="static/logout.jpg"></a>
+    </div>
+</div>
+    <div class="container">
+        <h2>Select a Subject</h2>
+        <div class="btn-group" role="group" aria-label="Subjects">
+           
+        </div>
+
+        <form id="quizForm" action="result" method="POST" class="mt-4">
+            <input type="hidden" id="subject" name="subject">
+            <div id="questions-container">
+                <!-- Dynamic question rendering based on subject will go here -->
+            </div>
+            <button type="submit" id="submitBtn" class="btn btn-primary">Submit Quiz</button>
+        </form>
+    </div>
+
+    <script src="static\quiz.js">
+</script>
+
+</body>
+</html>
