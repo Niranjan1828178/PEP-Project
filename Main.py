@@ -174,7 +174,7 @@ def get_topic():
         data = json.load(file)  # Load JSON file as a Python dictionary
     return data 
 
-# Route to Progress Page and calcuate progress
+# Route to Progress Page and calculate progress
 @app.route('/result', methods=['GET', 'POST'])
 def result():
     if 'username' not in session:
@@ -182,55 +182,54 @@ def result():
         return redirect(url_for('login'))
     if request.method == 'POST':
         data = get_data()
-        topic=request.form.get('subject')
-        questions=data[topic]
-        score=0
-        wrong_answer=[]
+        topic = request.form.get('subject')
+        questions = data[topic]
+        score = 0
+        wrong_answer = []
         for q in questions:
             correct_answer = q["options"][int(q["answer"])]
             selected_answer = request.form.get(str(q["id"]))
-            if selected_answer != None:
+            if selected_answer is not None:
                 if correct_answer == selected_answer:
-                    score+=1
+                    score += 1
                 else:
                     if wrong_answer:
-                        t=True
+                        t = True
                         for i in wrong_answer:
-                            if q["subtopic"] ==i[0]:
-                               t=False
+                            if q["subtopic"] == i[0]:
+                                t = False
                         if t:
-                            da=[q["subtopic"],q["link"]]
+                            da = [q["subtopic"], q["link"]]
                             wrong_answer.append(da)
                     else:
-                        da=[q["subtopic"],q["link"]]
+                        da = [q["subtopic"], q["link"]]
                         wrong_answer.append(da)
         print("crossed")
         user = User.query.filter_by(username=session['username']).first()
         print(f"got user:{user}: score: {score}")
-        quizres=QuizResult.query.filter_by(user_id=user.id).all()
-        t=True
+        quizres = QuizResult.query.filter_by(user_id=user.id).all()
+        t = True
         for q in quizres:
-            if q.topic==topic:
-                q.score=score
+            if q.topic == topic:
+                q.score = score
                 db.session.commit()
-                t=False
+                t = False
         if t:
             new_user = QuizResult(user_id=user.id, topic=topic, score=score)
-            db.session.add(new_user) 
-        user_results=QuizResult.query.filter_by(user_id=user.id).all()
-        ts=0
+            db.session.add(new_user)
+        user_results = QuizResult.query.filter_by(user_id=user.id).all()
+        ts = 0
         for usr in user_results:
-            ts+=usr.score
-        user.score=ts
+            ts += usr.score
+        user.score = ts
         print(f"got tsc:{ts}")
-            # Add the new user to the session
         db.session.commit()
-        if score==10:
-            advance=get_topic()
-            advance=advance[topic]
-            data={"score":score,"improvement":advance}
+        if score == 10:
+            advance = get_topic()
+            advance = advance[topic]
+            data = {"score": score, "improvement": advance}
         else:
-            data={"score":score,"improvement":wrong_answer}
+            data = {"score": score, "improvement": wrong_answer}
         return render_template('progress.html', result=data)
     return redirect(url_for('index'))
 

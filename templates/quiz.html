@@ -1,37 +1,64 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Page</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="static/quiz.css">
-    <link rel="stylesheet" href="static/style.css">
+    <title>LearnSphere - Quiz</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div id="back">
-    <div class="title_container">
-        <div class="wtitle">LearnSphere</div>
-        <a class="logout move" href="{{ url_for('logout') }}"><img class="leaderpic" src="static/logout.jpg"></a>
-    </div>
-</div>
-    <div class="container">
-        <h2>Select a Subject</h2>
-        <div class="btn-group" role="group" aria-label="Subjects">
-           
-        </div>
-
-        <form id="quizForm" action="result" method="POST" class="mt-4">
-            <input type="hidden" id="subject" name="subject">
-            <div id="questions-container">
-                <!-- Dynamic question rendering based on subject will go here -->
+<body class="bg-gradient-to-br from-indigo-500 to-purple-600 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-white bg-opacity-90 shadow-lg px-6 py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-indigo-600">LearnSphere</h1>
+            <div class="flex items-center gap-4">
+                <a href="{{ url_for('index') }}" 
+                   class="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors">
+                    <span class="font-medium">Back to Dashboard</span>
+                </a>
+                <a href="{{ url_for('logout') }}" 
+                   class="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors">
+                    <span class="font-medium">Logout</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                </a>
             </div>
-            <button type="submit" id="submitBtn" class="btn btn-primary">Submit Quiz</button>
-        </form>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-12">
+        <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-8 backdrop-blur-lg bg-opacity-90">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Select a Subject</h2>
+
+            <!-- Subject Selection -->
+            <div id="subject-container" class="flex flex-wrap justify-center gap-4 mb-8">
+                <!-- Subjects will be dynamically loaded by quiz.js -->
+            </div>
+
+            <!-- Quiz Form -->
+            <form id="quizForm" action="result" method="POST" class="space-y-6">
+                <input type="hidden" id="subject" name="subject">
+                
+                <!-- Questions Container -->
+                <div id="questions-container" class="space-y-8">
+                    <!-- Dynamic questions will be inserted by quiz.js -->
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submitBtn"
+                    class="w-full bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled>
+                    Submit Quiz
+                </button>
+            </form>
+        </div>
     </div>
 
-    <script src="static\quiz.js">
-</script>
-
+    <!-- Link Quiz.js -->
+    <script src="{{ url_for('static', filename='quiz.js') }}"></script>
 </body>
 </html>
