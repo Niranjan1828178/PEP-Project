@@ -5,6 +5,7 @@ import json
 from groq import Groq
 from config import GROQ_API_KEY
 import markdown2
+import bcrypt  # Import the bcrypt library
 
 # Initialize Groq client
 groq_client = Groq(api_key=GROQ_API_KEY)
@@ -27,11 +28,19 @@ class User(db.Model):
     last_name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(25), unique=True, nullable=False)
     phone_number = db.Column(db.String(20))
-    password = db.Column(db.String(25), nullable=False)
+    password = db.Column(db.String(60), nullable=False)
     score = db.Column(db.Integer, default=0) 
 
     def __repr__(self):
         return f'<User {self.username}>'
+
+    def set_password(self, password):
+        """Hashes the password using bcrypt."""
+        self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+    def check_password(self, password):
+        """Checks if the provided password matches the stored hash."""
+        return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
 
 # Define QuizResult model
 class QuizResult(db.Model):
@@ -67,7 +76,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
-        if user and user.password == password:
+        if user and user.check_password(password):  # Use check_password to compare
             session['logged_in'] = True
             session['username'] = username
             session['user_id'] = user.id
@@ -112,21 +121,47 @@ def register():
         phone_number = request.form['phone_number']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
+
+        # Validate input fields
+        errors = []
+        if not username or not first_name or not last_name or not email or not password:
+            errors.append('All fields marked with * are required')
         if password != confirm_password:
-            flash('Passwords do not match. Please try again.', 'danger')
-            return redirect(url_for('register'))
-
+            errors.append('Passwords do not match')
+        if len(password) < 6:
+            errors.append('Password must be at least 6 characters long')
+        
+        # Check for existing user
         existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
-
         if existing_user:
-            flash('Username or email already exists. Try another one.', 'danger')
-        else:
-            new_user = User(username=username, first_name=first_name, last_name=last_name, email=email,
-                            phone_number=phone_number, password=password)
-            db.session.add(new_user)  # Add the new user to the session
-            db.session.commit()  # Commit the transaction to the database
+            if existing_user.username == username:
+                errors.append('Username already exists')
+            if existing_user.email == email:
+                errors.append('Email already registered')
+
+        if errors:
+            for error in errors:
+                flash(error, 'error')  # Changed 'danger' to 'error' for consistency
+            return render_template('register.html')  # Changed from redirect to render_template
+        
+        try:
+            new_user = User(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                phone_number=phone_number
+            )
+            new_user.set_password(password)
+            db.session.add(new_user)
+            db.session.commit()
             flash('Registration successful! Please log in.', 'success')
             return redirect(url_for('login'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Registration failed. Please try again.', 'error')
+            print(f"Registration error: {str(e)}")
+            return render_template('register.html')
 
     return render_template('register.html')
 

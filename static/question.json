@@ -159,7 +159,87 @@
       "answer": 2,
       "subtopic": "Comments",
       "link": "https://www.w3schools.com/python/python_comments.asp"
-    }
+    },
+    {
+      "id": 21,
+      "question": "What is the purpose of the `try...except` block in Python?",
+      "options": ["To define a function", "To handle exceptions", "To create a loop", "To declare a variable"],
+      "answer": 1,
+      "subtopic": "Exception Handling",
+      "link": "https://www.geeksforgeeks.org/python-try-except/"
+  },
+  {
+      "id": 22,
+      "question": "Which keyword is used to raise an exception in Python?",
+      "options": ["catch", "except", "raise", "throw"],
+      "answer": 2,
+      "subtopic": "Exception Handling",
+      "link": "https://www.geeksforgeeks.org/python-raise-exception/"
+  },
+  {
+      "id": 23,
+      "question": "Which of the following is a correct way to open a file for reading in Python?",
+      "options": ["file = open('my_file.txt', 'w')", "file = open('my_file.txt', 'r')", "file = open('my_file.txt', 'a')", "file = open('my_file.txt')"],
+      "answer": 1,
+      "subtopic": "File I/O",
+      "link": "https://www.geeksforgeeks.org/reading-writing-text-files-python/"
+  },
+  {
+      "id": 24,
+      "question": "What method is used to read all lines from a file into a list?",
+      "options": ["read()", "readline()", "readlines()", "readall()"],
+      "answer": 2,
+      "subtopic": "File I/O",
+      "link": "https://www.geeksforgeeks.org/how-to-read-a-file-line-by-line-in-python/"
+  },
+  {
+      "id": 25,
+      "question": "Which of the following is NOT a built-in function in Python?",
+      "options": ["print()", "len()", "sqrt()", "type()"],
+      "answer": 2,
+      "subtopic": "Built-in Functions",
+      "link": "https://www.geeksforgeeks.org/python-built-in-functions/"
+  },
+  {
+      "id": 26,
+      "question": "What is the purpose of the `map()` function?",
+      "options": ["To filter elements from a list", "To apply a function to each item in an iterable", "To sort a list", "To reduce a list to a single value"],
+      "answer": 2,
+      "subtopic": "Built-in Functions",
+      "link": "https://www.geeksforgeeks.org/python-map-function/"
+  },
+  {
+      "id": 27,
+      "question": "What does the `//` operator do in Python?",
+      "options": ["Normal Division", "Exponentiation", "Floor Division", "Modulo"],
+      "answer": 2,
+      "subtopic": "Operators",
+      "link": "https://www.geeksforgeeks.org/basic-operators-python/"
+  },
+    {
+      "id": 28,
+      "question": "Which of the following is the correct way to create a class in Python?",
+      "options": ["class MyClass:", "className MyClass:", "Class: MyClass", "object MyClass:"],
+      "answer": 0,
+      "subtopic": "Object-Oriented Programming",
+      "link": "https://www.geeksforgeeks.org/python-classes-and-objects/"
+  },
+  {
+      "id": 29,
+      "question": "What is the purpose of the `__init__` method in a Python class?",
+      "options": ["To define a static variable", "To initialize the object's attributes", "To destroy the object", "To call the parent class's constructor"],
+      "answer": 1,
+      "subtopic": "Object-Oriented Programming",
+      "link": "https://www.geeksforgeeks.org/init-method-in-python/"
+  },
+  {
+      "id": 30,
+      "question": "Which keyword is used to inherit from another class in Python?",
+      "options": ["inherits", "extends", "inherit", "class"],
+      "answer": 3,
+      "subtopic": "Inheritance",
+      "link": "https://www.geeksforgeeks.org/inheritance-in-python/"
+  }
   ],
   "java": [
     {
