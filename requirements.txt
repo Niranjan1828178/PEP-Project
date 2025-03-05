@@ -1,0 +1,7 @@
+Flask==2.0.1
+Werkzeug==2.0.1
+SQLAlchemy==1.4.23
+flask-sqlalchemy==2.5.1
+pymysql==1.0.2
+groq
+python-dotenv==0.19.0

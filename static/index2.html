@@ -6,6 +6,7 @@
     <title>LearnSphere - Dashboard</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
 </head>
 <body class="bg-gradient-to-br from-indigo-500 to-purple-600 min-h-screen">
     <!-- Navigation Bar -->
@@ -26,7 +27,7 @@
     <div class="container mx-auto px-4 py-12">
         <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-8 backdrop-blur-lg bg-opacity-90">
             <!-- Welcome Message -->
-            <div class="text-center mb-8">
+            <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold text-gray-800 mb-4">
                     Welcome, {{ user.first_name }} {{ user.last_name }}!
                 </h2>
@@ -34,7 +35,7 @@
             </div>
 
             <!-- Options Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Profile Card -->
                 <a href="{{ url_for('profile') }}" 
                    class="group bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-200 border-2 border-gray-100 hover:border-indigo-500">
@@ -82,14 +83,18 @@
             <div class="mt-12">
                 <h3 class="text-2xl font-bold text-gray-800 mb-4">Courses</h3>
                 <div id="courses-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {% for topic in topics %}
-                    <a href="{{ url_for('topic_content', topic=topic) }}" 
-                       class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-200 border-2 border-gray-100 hover:border-indigo-500">
-                        <h3 class="text-xl font-semibold text-gray-800">{{ topic }}</h3>
-                        <p class="text-gray-500">Learn {{ topic }}</p>
-                    </a>
-                    {% endfor %}
+                    <!-- Courses will be dynamically inserted here -->
                 </div>
+            </div>
+
+            <!-- Subtopics Container -->
+            <div id="subtopics-container" class="mt-12">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Subtopics</h3>
+                <div id="subtopics-list" class="space-y-4">
+                    <!-- Subtopics will be dynamically inserted here -->
+                </div>
+                <iframe id="subtopic-content" class="w-full h-96 mt-4 border rounded-lg"></iframe>
+                <div id="error-message" class="hidden text-red-500 text-center mt-4">Unable to load content. Please try another link.</div>
             </div>
         </div>
     </div>

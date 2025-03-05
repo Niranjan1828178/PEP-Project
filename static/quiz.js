@@ -1,3 +1,8 @@
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
 let selectedSubject = '';
 
 function selectSubject(subject) {
@@ -26,6 +31,7 @@ async function renderSubjects() {
         const response = await fetch("static/question.json");
         const data = await response.json();
         const subjects = Object.keys(data);
+        const preselectedTopic = getQueryParam('topic');
         
         subjects.forEach(subject => {
             const subjectElement = document.createElement('button');
@@ -42,6 +48,11 @@ async function renderSubjects() {
             subjectElement.textContent = subject;
             subjectElement.addEventListener('click', () => selectSubject(subject));
             subjectsContainer.appendChild(subjectElement);
+            
+            // Auto-select the topic if it matches the URL parameter
+            if (subject === preselectedTopic) {
+                setTimeout(() => selectSubject(subject), 100);
+            }
         });
     } catch (error) {
         console.error('Error loading subjects:', error);

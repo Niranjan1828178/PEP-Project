@@ -1,14 +1,19 @@
-from flask import Flask, request, render_template, redirect, url_for, session, flash,send_file
+from flask import Flask, request, render_template, redirect, url_for, session, flash, send_file
 import os
 from flask_sqlalchemy import SQLAlchemy
 import json
+from groq import Groq
+from config import GROQ_API_KEY
+import markdown2
 
+# Initialize Groq client
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 app = Flask(__name__)
 
 # Connection to the database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://test:Password@localhost:3307/education'
-app.config['SECRET_KEY'] = os.urandom(24) 
+app.config['SECRET_KEY'] = 'your-secret-key-here'  # Replace os.urandom(24) with a fixed key
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy
@@ -46,9 +51,12 @@ with app.app_context():
 @app.route('/index')
 def index():
     if 'logged_in' in session:
-        user = User.query.filter_by(username=session['username']).first() 
-        name={'first_name':user.first_name,'last_name':user.last_name}
-        return render_template('index.html',user=name) 
+        user = User.query.filter_by(username=session['username']).first()
+        with open('static/question.json', 'r') as file:
+            topics_data = json.load(file)
+        
+        name = {'first_name': user.first_name, 'last_name': user.last_name}
+        return render_template('index.html', user=name, topics=topics_data.keys())
     else:
         return redirect(url_for('login'))  
 
@@ -59,12 +67,13 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
-        if user and user.password==password:
+        if user and user.password == password:
             session['logged_in'] = True
             session['username'] = username
-            return redirect(url_for('index')) 
+            session['user_id'] = user.id
+            return redirect(url_for('index'))
         else:
-            flash('Login Unsuccessful. Please check username and password', 'danger')
+            flash('Invalid username or password', 'error')
     return render_template('login.html')
 
 
@@ -77,12 +86,12 @@ def profile():
     user = User.query.filter_by(username=session['username']).first()  # Fetch the user object
 
     if request.method == 'POST':
-        user.username = request.form['username']
+        user.first_name = request.form['first_name']
+        user.last_name = request.form['last_name']
         user.email = request.form['email']
         user.phone_number = request.form['phone_number']
         db.session.commit()  # Commit the changes to the database
         flash('Profile updated successfully!', 'success')
-    print(user)
     return render_template('profile.html', user=user)
 
 # Route to Home Page
@@ -103,7 +112,6 @@ def register():
         phone_number = request.form['phone_number']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
-        print("hi came to register!!!!")
         if password != confirm_password:
             flash('Passwords do not match. Please try again.', 'danger')
             return redirect(url_for('register'))
@@ -129,7 +137,7 @@ def logout():
     return redirect(url_for('home'))
 
 # Route to Quiz Page
-@app.route('/quiz', methods=['GET', 'POST'])
+@app.route('/quiz', methods=['GET'])
 def quiz():
     if 'username' not in session:
         flash('You must be logged in to take the quiz!', 'danger')
@@ -160,7 +168,6 @@ def leaderboard():
             'score': total_score,
         })
         rank += 1 
-    print(leaderboard_data)
     return render_template('leaderboard.html', leaderboard_data=leaderboard_data)
 
 
@@ -173,6 +180,82 @@ def get_topic():
     with open('static\\advanced.json', 'r') as file:
         data = json.load(file)  # Load JSON file as a Python dictionary
     return data 
+
+# Add this near other helper functions in Main.py
+def get_step_content(topic, subtopic):
+    """Helper function to get content for a specific step"""
+    try:
+        with open('static/question.json', 'r') as file:
+            topics_data = json.load(file)
+        
+        question = next((q for q in topics_data[topic] if q['subtopic'] == subtopic), None)
+        
+        if question:
+            prompt = f"""Explain {subtopic} in {topic} programming language with the following structure:
+            1. Brief Introduction (2-3 sentences)
+            2. Main Concept (detailed explanation)
+            3. Code Examples (with comments)
+            4. Key Points to Remember
+            
+            Format the response with proper Markdown headings and code blocks."""
+            
+            response = groq_client.chat.completions.create(
+                messages=[{"role": "user", "content": prompt}],
+                model="llama-3.3-70b-versatile",
+                max_tokens=2048
+            )
+            content = response.choices[0].message.content
+
+            # Parse content into sections
+            sections = []
+            current_section = {"heading": "", "description": "", "examples": []}
+            in_code_block = False
+            current_code = ""
+            
+            for line in content.split('\n'):
+                if line.startswith('#'):  # Section header
+                    if current_section["heading"]:
+                        if current_code:
+                            current_section["examples"].append(current_code)
+                            current_code = ""
+                        sections.append(current_section.copy())
+                    current_section = {
+                        "heading": line.replace('#', '').strip(),
+                        "description": "",
+                        "examples": []
+                    }
+                elif line.strip().startswith('```'):
+                    if in_code_block:
+                        current_section["examples"].append(current_code.strip())
+                        current_code = ""
+                        in_code_block = False
+                    else:
+                        in_code_block = True
+                else:
+                    if in_code_block:
+                        current_code += line + "\n"
+                    elif line.strip():
+                        current_section["description"] += line + "\n"
+            
+            # Add the last section
+            if current_section["heading"]:
+                if current_code:
+                    current_section["examples"].append(current_code)
+                sections.append(current_section)
+
+            return {
+                "content": {
+                    "title": f"{subtopic} in {topic}",
+                    "introduction": sections[0]["description"] if sections else "",
+                    "sections": sections[1:] if len(sections) > 1 else sections,
+                    "summary": question['link'] if question else "Visit the provided link to learn more.",
+                    "notes": "Practice these concepts to better understand them."
+                }
+            }
+        return None
+    except Exception as e:
+        print(f"Error in get_step_content: {str(e)}")
+        return None
 
 # Route to Progress Page and calculate progress
 @app.route('/result', methods=['GET', 'POST'])
@@ -204,9 +287,7 @@ def result():
                     else:
                         da = [q["subtopic"], q["link"]]
                         wrong_answer.append(da)
-        print("crossed")
         user = User.query.filter_by(username=session['username']).first()
-        print(f"got user:{user}: score: {score}")
         quizres = QuizResult.query.filter_by(user_id=user.id).all()
         t = True
         for q in quizres:
@@ -222,7 +303,6 @@ def result():
         for usr in user_results:
             ts += usr.score
         user.score = ts
-        print(f"got tsc:{ts}")
         db.session.commit()
         if score == 10:
             advance = get_topic()
@@ -232,6 +312,72 @@ def result():
             data = {"score": score, "improvement": wrong_answer}
         return render_template('progress.html', result=data)
     return redirect(url_for('index'))
+
+@app.route('/topics/<topic>')
+def topic_content(topic):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    # Initialize progress tracking if not exists
+    if 'progress' not in session:
+        session['progress'] = {}
+    if topic not in session['progress']:
+        session['progress'][topic] = {
+            'current_step': 0,
+            'total_steps': len(get_topic_content(topic)),
+            'completed': False
+        }
+    
+    # Redirect to the current step
+    current_step = session['progress'][topic]['current_step']
+    return redirect(url_for('topic_step', topic=topic, step=current_step))
+
+def get_topic_content(topic):
+    # Helper function to get structured content for a topic
+    with open('static/question.json', 'r') as file:
+        topics_data = json.load(file)
+    
+    if topic not in topics_data:
+        return []
+        
+    subtopics = list(set(q['subtopic'] for q in topics_data[topic]))
+    return subtopics
+
+@app.route('/topics/<topic>/step/<int:step>')
+def topic_step(topic, step):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+        
+    subtopics = get_topic_content(topic)
+    total_steps = len(subtopics)
+    
+    if step < 0 or step >= total_steps:
+        return redirect(url_for('topic_content', topic=topic))
+    
+    # Update progress
+    if topic in session['progress']:
+        if step > session['progress'][topic]['current_step']:
+            session['progress'][topic]['current_step'] = step
+            if step == total_steps - 1:
+                session['progress'][topic]['completed'] = True
+        session.modified = True
+    
+    # Get content for current step
+    current_subtopic = subtopics[step]
+    content = [get_step_content(topic, current_subtopic)]
+    
+    return render_template('steps.html',
+                         topic=topic,
+                         current_step=step,
+                         total_steps=total_steps,
+                         progress=(step / total_steps) * 100,
+                         section_name=f"Learning {topic}",
+                         content=content)
+
+# Add this helper function
+@app.template_filter('markdown')
+def markdown_filter(text):
+    return markdown2.markdown(text, extras=['fenced-code-blocks', 'tables'])
 
 # main Starts
 if __name__ == '__main__':
