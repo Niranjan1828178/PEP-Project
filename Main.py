@@ -5,7 +5,7 @@ import json
 from groq import Groq
 from config import GROQ_API_KEY
 import markdown2
-import bcrypt  # Import the bcrypt library
+import bcrypt  
 
 # Initialize Groq client
 groq_client = Groq(api_key=GROQ_API_KEY)
@@ -229,7 +229,7 @@ def get_step_content(topic, subtopic):
             prompt = f"""Explain {subtopic} in {topic} programming language with the following structure:
             1. Brief Introduction (2-3 sentences)
             2. Main Concept (detailed explanation)
-            3. Code Examples (with comments)
+            3. Code Examples (with comments if necessary else text or formule examples)
             4. Key Points to Remember
             
             Format the response with proper Markdown headings and code blocks."""

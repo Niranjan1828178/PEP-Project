@@ -114,6 +114,8 @@ async function renderQuestions() {
 
 function getRandomQuestions(questions, count) {
     const shuffled = [...questions].sort(() => 0.5 - Math.random());
+    console.log(shuffled);
+    
     return shuffled.slice(0, count);
 }
 
