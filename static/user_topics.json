@@ -1,0 +1,125 @@
+{
+    "niranjan123": {
+        "topics": {
+            "DSA": {
+                "table_of_contents": [
+                    "Introduction to Data Structures and Algorithms",
+                    "Big-O Notation and Time Complexity",
+                    "Arrays and Vectors",
+                    "Linked Lists",
+                    "Stacks and Queues",
+                    "Trees (Binary Trees, AVL Trees, BSTs)",
+                    "Graphs (Basic Concepts, Types, and Representations)",
+                    "Hash Tables",
+                    "Heaps and Priority Queues",
+                    "Sorting Algorithms (Bubble Sort, Selection Sort, Insertion Sort, Merge Sort, Quick Sort)",
+                    "Searching Algorithms (Linear Search, Binary Search)",
+                    "Recursion and Dynamic Programming",
+                    "Bit Manipulation",
+                    "String Algorithms"
+                ],
+                "created_at": "2025-03-07T18:32:34.293184"
+            },
+            "MySQL": {
+                "table_of_contents": [
+                    "Introduction to MySQL",
+                    "Setting Up and Installing MySQL",
+                    "Basic MySQL Data Types",
+                    "Creating and Managing Databases",
+                    "Creating and Managing Tables",
+                    "Inserting, Updating, and Deleting Data",
+                    "MySQL Queries: SELECT, FROM, WHERE, GROUP BY, HAVING, ORDER BY",
+                    "MySQL Functions: Aggregate Functions, String Functions, Date and Time Functions",
+                    "MySQL Subqueries and Joins",
+                    "MySQL Indexing and Optimization",
+                    "MySQL Security: User Accounts, Permissions, and Access Control",
+                    "MySQL Backup and Recovery",
+                    "Advanced MySQL Topics: Triggers, Views, Stored Procedures",
+                    "MySQL Best Practices and Troubleshooting",
+                    "MySQL Integration with Programming Languages: PHP, Python, Java"
+                ],
+                "created_at": "2025-03-08T05:10:57.160226"
+            },
+            "Mongodb": {
+                "table_of_contents": [
+                    "Introduction to MongoDB",
+                    "Data Modeling and Schema Design",
+                    "Setting Up a MongoDB Environment",
+                    "Basic MongoDB Data Types",
+                    "Creating and Managing Collections",
+                    "Inserting, Updating, and Deleting Documents",
+                    "Querying and Filtering Data",
+                    "Indexing and Optimization Techniques",
+                    "Aggregation Framework and Pipeline",
+                    "Data Processing and Map-Reduce",
+                    "Database Security and Authentication",
+                    "Backup and Recovery Strategies",
+                    "Scaling and Sharding in MongoDB",
+                    "MongoDB Drivers and Integration",
+                    "Advanced Topics and Best Practices",
+                    "Real-World Applications and Use Cases",
+                    "Troubleshooting and Debugging MongoDB"
+                ],
+                "created_at": "2025-03-08T05:10:58.268025"
+            },
+            "Physic": {
+                "table_of_contents": [
+                    "Introduction to Physics",
+                    "Kinematics: Motion in One Dimension",
+                    "Kinematics: Motion in Two and Three Dimensions",
+                    "Dynamics: Newton's Laws of Motion",
+                    "Dynamics: Energy and Work",
+                    "Dynamics: Momentum and Collisions",
+                    "Rotational Motion and Gravity",
+                    "Oscillations and Waves",
+                    "Thermodynamics: Temperature and Heat",
+                    "Thermodynamics: Laws of Thermodynamics",
+                    "Electromagnetism: Electric Fields and Forces",
+                    "Electromagnetism: Magnetic Fields and Forces",
+                    "Electromagnetism: Electromagnetic Induction",
+                    "Optics: Reflection and Refraction",
+                    "Optics: Mirrors and Lenses",
+                    "Optics: Wave Optics and Interference",
+                    "Relativity: Special Relativity",
+                    "Relativity: General Relativity",
+                    "Quantum Mechanics: Introduction to Quantum Mechanics",
+                    "Quantum Mechanics: Wave Functions and Schr\u00f6dinger Equation",
+                    "Quantum Mechanics: Applications of Quantum Mechanics",
+                    "Nuclear Physics: Introduction to Nuclear Physics",
+                    "Nuclear Physics: Radioactivity and Nuclear Reactions",
+                    "Particle Physics: Introduction to Particle Physics",
+                    "Particle Physics: Particle Interactions and Forces"
+                ],
+                "created_at": "2025-03-08T05:15:52.065472"
+            }
+        }
+    },
+    "preetham123": {
+        "topics": {
+            "OS": {
+                "table_of_contents": [
+                    "Introduction to Operating Systems",
+                    "History of Operating Systems",
+                    "Types of Operating Systems",
+                    "Operating System Components",
+                    "Process Management",
+                    "Memory Management",
+                    "File System Management",
+                    "Input/Output Management",
+                    "Security and Access Control",
+                    "Networking Fundamentals",
+                    "Interrupts and Exceptions Handling",
+                    "Synchronization and Deadlock Handling",
+                    "Device Management and Drivers",
+                    "Power Management and Energy Efficiency",
+                    "Virtualization and Cloud Computing",
+                    "Operating System Installation and Configuration",
+                    "Troubleshooting and Maintenance",
+                    "Operating System Security Threats and Mitigation",
+                    "Advanced Operating System Topics"
+                ],
+                "created_at": "2025-03-08T06:09:32.435153"
+            }
+        }
+    }
+}
