@@ -4,13 +4,13 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 import json
 from groq import Groq
-# from config import GROQ_API_KEY
+from config import GROQ_API_KEY
 import markdown2
 import bcrypt
 from sqlalchemy.exc import IntegrityError
 
 # Initialize Groq client
-groq_client = Groq(api_key="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")
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 app = Flask(__name__)
 
