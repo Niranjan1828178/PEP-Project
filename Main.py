@@ -1,15 +1,16 @@
+
 from flask import Flask, request, render_template, redirect, url_for, session, flash, send_file
 import os
 from flask_sqlalchemy import SQLAlchemy
 import json
 from groq import Groq
-from config import GROQ_API_KEY
+# from config import GROQ_API_KEY
 import markdown2
-import bcrypt  
+import bcrypt
 from sqlalchemy.exc import IntegrityError
 
 # Initialize Groq client
-groq_client = Groq(api_key=GROQ_API_KEY)
+groq_client = Groq(api_key="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")
 
 app = Flask(__name__)
 
@@ -30,7 +31,7 @@ class User(db.Model):
     email = db.Column(db.String(25), unique=True, nullable=False)
     phone_number = db.Column(db.String(20))
     password = db.Column(db.String(60), nullable=False)
-    score = db.Column(db.Integer, default=0) 
+    score = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -64,7 +65,7 @@ class UserActivity(db.Model):
     topic = db.Column(db.String(50), nullable=False)
     score = db.Column(db.Integer)  # For quizzes
     timestamp = db.Column(db.DateTime(timezone=True), default=ist_now)
-    
+
     # Add unique constraint for user_id, activity_type, and topic
     __table_args__ = (
         db.UniqueConstraint('user_id', 'activity_type', 'topic', name='unique_user_activity'),
@@ -77,10 +78,10 @@ class CourseProgress(db.Model):
     current_step = db.Column(db.Integer, default=0)
     total_steps = db.Column(db.Integer, nullable=False)
     completed = db.Column(db.Boolean, default=False)
-    last_accessed = db.Column(db.DateTime, default=datetime.utcnow)
+    last_accessed = db.Column(db.DateTime(timezone=True), default=ist_now)
 
 # Create database tables within the Flask application context
-with app.app_context(): 
+with app.app_context():
     db.create_all()  # Recreates tables with new constraints
 
 # Route to Index Page
@@ -90,7 +91,7 @@ def index():
         user = User.query.filter_by(username=session['username']).first()
         with open('static/question.json', 'r') as file:
             topics_data = json.load(file)
-        
+
         # Get custom topics with their full content
         custom_topics = {}
         try:
@@ -100,14 +101,14 @@ def index():
                     custom_topics = user_topics[user.username]["topics"]
         except FileNotFoundError:
             pass
-        
+
         name = {'first_name': user.first_name, 'last_name': user.last_name}
-        return render_template('index.html', 
-                             user=name, 
+        return render_template('index.html',
+                             user=name,
                              topics=topics_data.keys(),
                              custom_topics=custom_topics)
     else:
-        return redirect(url_for('login'))  
+        return redirect(url_for('login'))
 
 # Route to Login Page
 @app.route('/login', methods=['GET', 'POST'])
@@ -168,7 +169,7 @@ def register():
             errors.append('Passwords do not match')
         if len(password) < 6:
             errors.append('Password must be at least 6 characters long')
-        
+
         # Check for existing user
         existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
         if existing_user:
@@ -181,7 +182,7 @@ def register():
             for error in errors:
                 flash(error, 'error')  # Changed 'danger' to 'error' for consistency
             return render_template('register.html')  # Changed from redirect to render_template
-        
+
         try:
             new_user = User(
                 username=username,
@@ -226,7 +227,7 @@ def leaderboard():
     rank = 1
     for user in users:
         username = user.username
-        total_score = user.score 
+        total_score = user.score
         if rank == 1:
             badge = "Gold"
         elif rank == 2:
@@ -234,25 +235,25 @@ def leaderboard():
         elif rank==3:
             badge = "Bronze"
         else:
-            badge = "Participation" 
+            badge = "Participation"
         leaderboard_data.append({
             'rank': rank,
             'username': username,
             'score': total_score,
         })
-        rank += 1 
+        rank += 1
     return render_template('leaderboard.html', leaderboard_data=leaderboard_data)
 
 
 def get_data():
     with open('static\\question.json', 'r') as file:
         data = json.load(file)  # Load JSON file as a Python dictionary
-    return data 
+    return data
 
 def get_topic():
     with open('static\\advanced.json', 'r') as file:
         data = json.load(file)  # Load JSON file as a Python dictionary
-    return data 
+    return data
 
 # Add this near other helper functions in Main.py
 def get_step_content(topic, subtopic):
@@ -261,15 +262,15 @@ def get_step_content(topic, subtopic):
         # Handle custom topics
         if isinstance(topic, str) and topic.startswith('custom_'):
             real_topic = topic[7:]  # Remove 'custom_' prefix
-            
+
             prompt = f"""Explain {subtopic} in detail with the following structure:
             1. Brief Introduction (2-3 sentences)
             2. Main Concept (detailed explanation)
             3. Examples and Implementation
             4. Key Points to Remember
-            
+
             Format the response with proper Markdown headings and code blocks."""
-            
+
             response = groq_client.chat.completions.create(
                 messages=[{"role": "user", "content": prompt}],
                 model="llama-3.3-70b-versatile",
@@ -282,7 +283,7 @@ def get_step_content(topic, subtopic):
             current_section = {"heading": "", "description": "", "examples": []}
             in_code_block = False
             current_code = ""
-            
+
             for line in content.split('\n'):
                 if line.startswith('#'):  # Section header
                     if current_section["heading"]:
@@ -328,18 +329,18 @@ def get_step_content(topic, subtopic):
         else:
             with open('static/question.json', 'r') as file:
                 topics_data = json.load(file)
-            
+
             question = next((q for q in topics_data[topic] if q['subtopic'] == subtopic), None)
-            
+
             if question:
                 prompt = f"""Explain {subtopic} in {topic} programming language with the following structure:
                 1. Brief Introduction (2-3 sentences)
                 2. Main Concept (detailed explanation)
                 3. Code Examples (with comments if necessary else text or formule examples)
                 4. Key Points to Remember
-                
+
                 Format the response with proper Markdown headings and code blocks."""
-                
+
                 response = groq_client.chat.completions.create(
                     messages=[{"role": "user", "content": prompt}],
                     model="llama-3.3-70b-versatile",
@@ -352,7 +353,7 @@ def get_step_content(topic, subtopic):
                 current_section = {"heading": "", "description": "", "examples": []}
                 in_code_block = False
                 current_code = ""
-                
+
                 for line in content.split('\n'):
                     if line.startswith('#'):  # Section header
                         if current_section["heading"]:
@@ -377,7 +378,7 @@ def get_step_content(topic, subtopic):
                             current_code += line + "\n"
                         elif line.strip():
                             current_section["description"] += line + "\n"
-                
+
                 # Add the last section
                 if current_section["heading"]:
                     if current_code:
@@ -445,7 +446,7 @@ def result():
             ts += usr.score
         user.score = ts
         db.session.commit()
-        
+
         # Add activity tracking
         new_activity = UserActivity(
             user_id=user.id,
@@ -455,7 +456,7 @@ def result():
         )
         db.session.add(new_activity)
         db.session.commit()
-        
+
         if score == 10:
             advance = get_topic()
             advance = advance[topic]
@@ -469,7 +470,7 @@ def result():
 def topic_content(topic):
     if 'username' not in session:
         return redirect(url_for('login'))
-    
+
     # Initialize progress tracking if not exists
     if 'progress' not in session:
         session['progress'] = {}
@@ -479,7 +480,7 @@ def topic_content(topic):
             'total_steps': len(get_topic_content(topic)),
             'completed': False
         }
-    
+
     # Redirect to the current step
     current_step = session['progress'][topic]['current_step']
     return redirect(url_for('topic_step', topic=topic, step=current_step))
@@ -500,10 +501,10 @@ def get_topic_content(topic):
         # Handle regular topics as before
         with open('static/question.json', 'r') as file:
             topics_data = json.load(file)
-        
+
         if topic not in topics_data:
             return []
-            
+
         subtopics = list(set(q['subtopic'] for q in topics_data[topic]))
         return subtopics
 
@@ -511,11 +512,11 @@ def get_topic_content(topic):
 def topic_step(topic, step):
     if 'username' not in session:
         return redirect(url_for('login'))
-    
+
     try:
         # Get the user
         user = User.query.filter_by(username=session['username']).first()
-        
+
         # Handle custom topics
         if topic.startswith('custom_'):
             real_topic = topic[7:]  # Remove 'custom_' prefix
@@ -524,27 +525,27 @@ def topic_step(topic, step):
                 if user.username in user_topics and real_topic in user_topics[user.username]['topics']:
                     toc = user_topics[user.username]['topics'][real_topic]['table_of_contents']
                     total_steps = len(toc)
-                    
+
                     if step < 0 or step >= total_steps:
                         return redirect(url_for('index'))
-                    
+
                     current_subtopic = toc[step]
                     content = get_step_content(topic, current_subtopic)
         else:
             # Handle regular topics
             with open('static/question.json', 'r') as file:
                 topics_data = json.load(file)
-                
+
             if topic not in topics_data:
                 flash('Topic not found', 'error')
                 return redirect(url_for('index'))
-            
+
             subtopics = list(set(q['subtopic'] for q in topics_data[topic]))
             total_steps = len(subtopics)
-            
+
             if step < 0 or step >= total_steps:
                 return redirect(url_for('topic_content', topic=topic))
-            
+
             current_subtopic = subtopics[step]
             content = get_step_content(topic, current_subtopic)
 
@@ -554,7 +555,7 @@ def topic_step(topic, step):
                 user_id=user.id,
                 topic=topic
             ).first()
-            
+
             if not progress:
                 progress = CourseProgress(
                     user_id=user.id,
@@ -575,7 +576,7 @@ def topic_step(topic, step):
 
             # Calculate progress percentage
             progress_percentage = int((progress.current_step + 1) / total_steps * 100)
-            
+
             try:
                 if progress_changed: # Only update the UserActivity if course progress changed
                     # Update or create activity
@@ -584,7 +585,7 @@ def topic_step(topic, step):
                         activity_type='course',
                         topic=topic
                     ).first()
-                    
+
                     if activity:
                         activity.score = progress_percentage
                         activity.timestamp = ist_now()
@@ -610,10 +611,10 @@ def topic_step(topic, step):
                 db.session.rollback()
                 flash('Error updating progress', 'error')
                 return redirect(url_for('index'))
-        
+
         flash('Content not found', 'error')
         return redirect(url_for('index'))
-                             
+
     except Exception as e:
         flash(f"Error loading content: {str(e)}", "error")
         return redirect(url_for('index'))
@@ -629,29 +630,29 @@ def activity():
     if 'username' not in session or 'logged_in' not in session:
         flash('Please log in to view your activity', 'error')
         return redirect(url_for('login'))
-    
+
     user = User.query.filter_by(username=session['username']).first()
     if not user:
         # Clear invalid session and redirect to login
         session.clear()
         flash('User session invalid. Please log in again.', 'error')
         return redirect(url_for('login'))
-    
+
     try:
         # Get courses with progress
         courses = CourseProgress.query.filter_by(user_id=user.id)\
             .filter((CourseProgress.current_step > 0) | (CourseProgress.completed == True))\
             .order_by(CourseProgress.last_accessed.desc())\
             .all()
-        
+
         # Get all activities
         activities = UserActivity.query.filter_by(user_id=user.id)\
             .order_by(UserActivity.timestamp.desc())\
             .limit(10)\
             .all()
-        
+
         return render_template('activity.html', courses=courses, activities=activities)
-    
+
     except Exception as e:
         flash(f'Error loading activity data: {str(e)}', 'error')
         return redirect(url_for('index'))
@@ -660,14 +661,14 @@ def activity():
 def add_custom_topic():
     if 'username' not in session:
         return redirect(url_for('login'))
-    
+
     user = User.query.filter_by(username=session['username']).first()
     topic_names = request.form.getlist('topic_names[]')
-    
+
     if not topic_names:
         flash('At least one topic name is required', 'error')
         return redirect(url_for('index'))
-    
+
     # Load or create user_topics.json
     file_path = 'static/user_topics.json'
     if os.path.exists(file_path):
@@ -675,24 +676,29 @@ def add_custom_topic():
             user_topics = json.load(file)
     else:
         user_topics = {}
-    
+
     # Initialize user's topics if not exist
     if user.username not in user_topics:
         user_topics[user.username] = {"topics": {}}
-    
+
     for topic_name in topic_names:
+        with open('static/all_topics.json', 'r') as file:
+            all_topics = json.load(file)
+        if topic_name.lower() not in all_topics["topics"]:
+            flash(f'Topic {topic_name} not found in the database', 'error')
+            continue
         # Generate table of contents using LLama model
-        prompt = f"""Create a detailed table of contents for learning {topic_name}. 
+        prompt = f"""Create a detailed table of contents maximum of 10 contents for learning {topic_name}.
         Return the response as a JSON array in the following format:
         ["Subtopic 1", "Subtopic 2", "Subtopic 3"]"""
-        
+
         try:
             response = groq_client.chat.completions.create(
                 messages=[{"role": "user", "content": prompt}],
                 model="llama-3.3-70b-versatile",
                 max_tokens=1024
             )
-            
+
             # Process the response to ensure valid JSON
             content = response.choices[0].message.content.strip()
             try:
@@ -709,13 +715,13 @@ def add_custom_topic():
                 else:
                     # Fallback to simple split by newlines
                     toc = [line.strip().strip('"-,') for line in content.split('\n') if line.strip()]
-            
+
             # Add topic to user's topics
             user_topics[user.username]["topics"][topic_name] = {
                 "table_of_contents": toc,
-                "created_at": datetime.utcnow().isoformat()
+                "created_at": ist_now().isoformat()
             }
-            
+
             # Create course progress entry
             course_progress = CourseProgress(
                 user_id=user.id,
@@ -725,7 +731,7 @@ def add_custom_topic():
                 completed=False
             )
             db.session.add(course_progress)
-            
+
             # Add activity for new topic creation
             new_activity = UserActivity(
                 user_id=user.id,
@@ -734,11 +740,11 @@ def add_custom_topic():
                 score=0  # Initial score
             )
             db.session.add(new_activity)
-            
+
         except Exception as e:
             flash(f'Error creating topic {topic_name}: {str(e)}', 'error')
             continue
-    
+
     # Save all topics back to file
     try:
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -749,20 +755,20 @@ def add_custom_topic():
     except Exception as e:
         db.session.rollback()
         flash(f'Error saving topics: {str(e)}', 'error')
-    
+
     return redirect(url_for('index'))
 
 @app.route('/dashboard')
 def dashboard():
     with open('static/user_topics.json', 'r') as f:
         user_topics = json.load(f)
-    
+
     username = session.get('username')
     if username in user_topics:
         custom_topics = user_topics[username].get('topics', {})
     else:
         custom_topics = {}
-    
+
     return render_template('index.html', custom_topics=custom_topics)
 
 # main Starts

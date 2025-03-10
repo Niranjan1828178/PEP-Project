@@ -142,5 +142,54 @@
                 "created_at": "2025-03-08T06:09:32.435153"
             }
         }
+    },
+    "naga123": {
+        "topics": {
+            "React": {
+                "table_of_contents": [
+                    "Introduction to React",
+                    "Setting up the Development Environment",
+                    "JSX and Components",
+                    "State and Props",
+                    "Event Handling and Hooks",
+                    "React Routing and Navigation",
+                    "State Management with Redux",
+                    "React Best Practices and Optimization",
+                    "Debugging and Testing React Applications",
+                    "Advanced React Concepts and Patterns"
+                ],
+                "created_at": "2025-03-10T17:07:16.078406"
+            },
+            "ylq": {
+                "table_of_contents": [
+                    "Introduction to YLQ",
+                    "YLQ Syntax and Basics",
+                    "YLQ Data Types",
+                    "YLQ Functions",
+                    "YLQ Control Structures",
+                    "YLQ Object-Oriented Programming",
+                    "YLQ File Input/Output",
+                    "YLQ Error Handling",
+                    "YLQ Advanced Topics",
+                    "YLQ Best Practices"
+                ],
+                "created_at": "2025-03-10T17:13:38.438698"
+            },
+            "C++": {
+                "table_of_contents": [
+                    "Introduction to C++",
+                    "Data Types and Variables",
+                    "Control Structures",
+                    "Functions",
+                    "Arrays and Vectors",
+                    "Pointers and References",
+                    "Object-Oriented Programming",
+                    "File Input/Output",
+                    "Error Handling and Exceptions",
+                    "Advanced Topics and Best Practices"
+                ],
+                "created_at": "2025-03-10T23:17:17.014341+05:30"
+            }
+        }
     }
 }

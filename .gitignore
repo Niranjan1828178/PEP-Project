@@ -1,7 +1,4 @@
-.env
-config.py
-__pycache__/
+
 *.pyc
 env
 Reports
-temp.txt
