@@ -91,6 +91,27 @@
                     "Particle Physics: Particle Interactions and Forces"
                 ],
                 "created_at": "2025-03-08T05:15:52.065472"
+            },
+            "React": {
+                "table_of_contents": [
+                    "Introduction to React",
+                    "Setting Up a React Environment",
+                    "JSX and Components",
+                    "Props and State",
+                    "Component Lifecycle Methods",
+                    "Event Handling in React",
+                    "React Hooks",
+                    "Context API and State Management",
+                    "React Router and Navigation",
+                    "Forms and Validation in React",
+                    "Error Handling and Debugging",
+                    "Optimizing and Improving Performance",
+                    "Testing and Deployment",
+                    "Advanced React Topics and Best Practices",
+                    "React Libraries and Tools",
+                    "Building a Full-Stack Application with React"
+                ],
+                "created_at": "2025-03-10T13:56:43.313497"
             }
         }
     },
